@@ -7,14 +7,12 @@ type Cell = {
 };
 
 export default function Home() {
-  const [rows, setRows] = useState<number>(4);
-  const [cols, setCols] = useState<number>(3);
+  const [rows, setRows] = useState(4);
+  const [cols, setCols] = useState(3);
   const [data, setData] = useState<Cell[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [address, setAddress] = useState("");
 
-  const [address, setAddress] = useState<string>("");
-
-  // Load data
   useEffect(() => {
     const saved = localStorage.getItem("gridData");
     if (saved) {
@@ -24,7 +22,6 @@ export default function Home() {
     }
   }, []);
 
-  // Save data
   useEffect(() => {
     if (data.length > 0) {
       localStorage.setItem("gridData", JSON.stringify(data));
@@ -33,14 +30,14 @@ export default function Home() {
 
   const generateCells = (r: number, c: number) => {
     const total = r * c;
-    const newData: Cell[] = Array.from({ length: total }, () => ({
+    const newData = Array.from({ length: total }, () => ({
       address: ""
     }));
     setData(newData);
   };
 
-  const openForm = (index: number) => {
-    setSelectedIndex(index);
+  const openForm = (i: number) => {
+    setSelectedIndex(i);
     setAddress("");
   };
 
@@ -53,15 +50,10 @@ export default function Home() {
     }
   };
 
-  const printPage = () => {
-    window.print();
-  };
-
   return (
-    <div>
-      {/* Controls */}
-      <div className="controls">
-        Rows:
+    <div className="app">
+      {/* Header */}
+      <div className="header">
         <input
           type="number"
           value={rows}
@@ -72,7 +64,6 @@ export default function Home() {
           }}
         />
 
-        Columns:
         <input
           type="number"
           value={cols}
@@ -83,25 +74,25 @@ export default function Home() {
           }}
         />
 
-        <button onClick={printPage}>🖨️ Print</button>
+        <button onClick={() => window.print()}>Print</button>
       </div>
 
-      {/* A4 Grid */}
+      {/* Grid */}
       <div className="a4-container">
         <div
           className="grid"
-          style={{
-            gridTemplateColumns: `repeat(${cols}, 1fr)`
-          }}
+          style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
         >
           {data.map((cell, i) => (
-            <div className="cell" key={i}>
-              {!cell.address ? (
-                <button onClick={() => openForm(i)}>+ Add</button>
+            <div
+              key={i}
+              className="cell"
+              onClick={() => openForm(i)}
+            >
+              {cell.address ? (
+                <div className="content">{cell.address}</div>
               ) : (
-                <div className="content">
-                  {cell.address}
-                </div>
+                <span className="placeholder">＋</span>
               )}
             </div>
           ))}
@@ -111,21 +102,16 @@ export default function Home() {
       {/* Popup */}
       {selectedIndex !== null && (
         <div className="overlay">
-          <div className="popup">
-            <h3>Paste Address</h3>
-
+          <div className="modal">
             <textarea
               autoFocus
-              placeholder="Paste address here..."
+              placeholder="Paste address..."
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
-
             <div className="actions">
-              <button onClick={save}>Save</button>
-              <button onClick={() => setSelectedIndex(null)}>
-                Cancel
-              </button>
+              <button className="primary" onClick={save}>Save</button>
+              <button onClick={() => setSelectedIndex(null)}>Cancel</button>
             </div>
           </div>
         </div>
