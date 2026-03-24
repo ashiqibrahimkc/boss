@@ -11,36 +11,33 @@ body {
 /* HEADER */
 .header {
   display: flex;
-  gap: 8px;
-  padding: 12px;
-  justify-content: center;
-}
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
 
-.header input {
-  width: 60px;
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
 }
 
 .header button {
-  background: #111;
+  background: black;
   color: white;
   border: none;
   padding: 8px 14px;
   border-radius: 10px;
 }
 
-/* A4 CARD */
+/* CONTAINER */
 .a4-container {
   width: 100%;
-  max-width: 210mm;
-  margin: auto;
-  padding: 10px;
+  max-width: 900px;
+  margin: 20px auto;
 
-  border-radius: 20px;
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  overflow: hidden;
+
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(12px);
 
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
@@ -48,22 +45,23 @@ body {
 /* GRID */
 .grid {
   display: grid;
-  gap: 8px;
+
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(7, minmax(110px, 1fr)); /* ✅ FIX */
+
+  gap: 6px;
+  padding: 6px;
 }
 
 /* CELL */
 .cell {
-  min-height: 90px;
-
-  border-radius: 14px;
   background: white;
+  border-radius: 12px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 1px;
-  font-size: 13px;
+  justify-content: flex-start; /* 🔥 LEFT ALIGN */
+  text-align: left; 
+  font-size: 16px;
+  font-weight: 600;
 
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 
@@ -71,18 +69,20 @@ body {
 }
 
 .cell:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 /* TEXT */
 .content {
+  padding: 6px;
+ text-align: left;     /* 🔥 important */
   white-space: pre-wrap;
-  line-height: 1.4;
 }
 
-.placeholder {
-  font-size: 22px;
-  color: #bbb;
+/* EMPTY */
+.plus {
+  font-size: 24px;
+  color: #ccc;
 }
 
 /* MODAL */
@@ -90,17 +90,21 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  backdrop-filter: blur(4px);
 }
 
 .modal {
   width: 90%;
-  max-width: 350px;
+  max-width: 360px;
+
   background: white;
   padding: 20px;
-  border-radius: 18px;
+  border-radius: 16px;
 
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
@@ -108,7 +112,7 @@ body {
 .modal textarea {
   width: 100%;
   height: 120px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #ddd;
   padding: 10px;
 }
@@ -120,21 +124,14 @@ body {
   margin-top: 10px;
 }
 
-.actions .primary {
-  background: #111;
+.save {
+  background: black;
   color: white;
-}
-
-/* MOBILE */
-@media (max-width: 600px) {
-  .cell {
-    min-height: 110px;
-    font-size: 14px;
-  }
 }
 
 /* PRINT */
 @media print {
+
   body {
     background: white;
   }
@@ -147,21 +144,26 @@ body {
   .a4-container {
     width: 210mm;
     height: 297mm;
-    padding: 0;
+    margin: 0;
     box-shadow: none;
     border-radius: 0;
   }
 
   .grid {
-    gap: 0;
     height: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(7, 1fr); /* ✅ ALWAYS 7 */
+    gap: 0;
+    padding: 0;
   }
 
   .cell {
     border: 1px solid #000;
-    box-shadow: none;
     border-radius: 0;
-    font-size: 10px;
+    box-shadow: none;
+
+    font-size: 18px;
+    font-weight: 700;
   }
 }
 

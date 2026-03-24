@@ -7,33 +7,45 @@ type Cell = {
 };
 
 export default function Home() {
-  const [rows, setRows] = useState(4);
-  const [cols, setCols] = useState(3);
+  const rows = 7;
+  const cols = 3;
+  const TOTAL = rows * cols; // ✅ 21
+
   const [data, setData] = useState<Cell[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [address, setAddress] = useState("");
 
+  // 🔥 LOAD DATA (FIXED LENGTH)
   useEffect(() => {
     const saved = localStorage.getItem("gridData");
+
     if (saved) {
-      setData(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+
+      // ✅ FORCE ONLY 21 CELLS
+      const fixed = parsed.slice(0, TOTAL);
+
+      // if less, fill remaining
+      while (fixed.length < TOTAL) {
+        fixed.push({ address: "" });
+      }
+
+      setData(fixed);
     } else {
-      generateCells(10, 5);
+      generateCells();
     }
   }, []);
 
+  // 🔥 SAVE DATA
   useEffect(() => {
-    if (data.length > 0) {
+    if (data.length === TOTAL) {
       localStorage.setItem("gridData", JSON.stringify(data));
     }
   }, [data]);
 
-  const generateCells = (r: number, c: number) => {
-    const total = r * c;
-    const newData = Array.from({ length: total }, () => ({
-      address: ""
-    }));
-    setData(newData);
+  // 🔥 GENERATE CELLS (ALWAYS 21)
+  const generateCells = () => {
+    setData(Array.from({ length: TOTAL }, () => ({ address: "" })));
   };
 
   const openForm = (i: number) => {
@@ -52,37 +64,16 @@ export default function Home() {
 
   return (
     <div className="app">
-      {/* Header */}
+
+      {/* HEADER */}
       <div className="header">
-        <input
-          type="number"
-          value={rows}
-          onChange={(e) => {
-            const r = Number(e.target.value);
-            setRows(r);
-            generateCells(r, cols);
-          }}
-        />
-
-        <input
-          type="number"
-          value={cols}
-          onChange={(e) => {
-            const c = Number(e.target.value);
-            setCols(c);
-            generateCells(rows, c);
-          }}
-        />
-
+        <h2>BOSS 💰</h2>
         <button onClick={() => window.print()}>Print</button>
       </div>
 
-      {/* Grid */}
+      {/* GRID */}
       <div className="a4-container">
-        <div
-          className="grid"
-          style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
-        >
+        <div className="grid">
           {data.map((cell, i) => (
             <div
               key={i}
@@ -92,30 +83,34 @@ export default function Home() {
               {cell.address ? (
                 <div className="content">{cell.address}</div>
               ) : (
-                <span className="placeholder">＋</span>
+                <span className="plus">＋</span>
               )}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Popup */}
+      {/* MODAL */}
       {selectedIndex !== null && (
         <div className="overlay">
           <div className="modal">
+            <h3>Paste Address</h3>
+
             <textarea
               autoFocus
               placeholder="Paste address..."
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
+
             <div className="actions">
-              <button className="primary" onClick={save}>Save</button>
+              <button className="save" onClick={save}>Save</button>
               <button onClick={() => setSelectedIndex(null)}>Cancel</button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
