@@ -58,14 +58,17 @@ export default function Home() {
     }
   };
 
-  // 🔥 PRINT + CLEAR AFTER (BEST UX)
+  // ✅ PRINT ONLY
   const handlePrint = () => {
     window.print();
+  };
 
-    setTimeout(() => {
+  // 🔥 CLEAR ALL BUTTON FUNCTION
+  const clearAll = () => {
+    if (confirm("Are you sure you want to clear all data?")) {
       localStorage.removeItem("gridData");
-      generateCells(); // reset cells
-    }, 500); // small delay so print still shows data
+      generateCells();
+    }
   };
 
   return (
@@ -74,7 +77,13 @@ export default function Home() {
       {/* HEADER */}
       <div className="header">
         <h2>BOSS 💰</h2>
-        <button onClick={handlePrint}>Print</button>
+
+        <div className="actions-top">
+          <button onClick={handlePrint}>Print</button>
+          <button className="clear-btn" onClick={clearAll}>
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* GRID */}
