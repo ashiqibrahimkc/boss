@@ -18,7 +18,7 @@ export default function Home() {
     if (saved) {
       setData(JSON.parse(saved));
     } else {
-      generateCells(4, 3);
+      generateCells(10, 5);
     }
   }, []);
 
