@@ -9,23 +9,20 @@ type Cell = {
 export default function Home() {
   const rows = 7;
   const cols = 3;
-  const TOTAL = rows * cols; // ✅ 21
+  const TOTAL = rows * cols;
 
   const [data, setData] = useState<Cell[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [address, setAddress] = useState("");
 
-  // 🔥 LOAD DATA (FIXED LENGTH)
+  // LOAD DATA
   useEffect(() => {
     const saved = localStorage.getItem("gridData");
 
     if (saved) {
       const parsed = JSON.parse(saved);
-
-      // ✅ FORCE ONLY 21 CELLS
       const fixed = parsed.slice(0, TOTAL);
 
-      // if less, fill remaining
       while (fixed.length < TOTAL) {
         fixed.push({ address: "" });
       }
@@ -36,14 +33,13 @@ export default function Home() {
     }
   }, []);
 
-  // 🔥 SAVE DATA
+  // SAVE DATA
   useEffect(() => {
     if (data.length === TOTAL) {
       localStorage.setItem("gridData", JSON.stringify(data));
     }
   }, [data]);
 
-  // 🔥 GENERATE CELLS (ALWAYS 21)
   const generateCells = () => {
     setData(Array.from({ length: TOTAL }, () => ({ address: "" })));
   };
@@ -62,13 +58,23 @@ export default function Home() {
     }
   };
 
+  // 🔥 PRINT + CLEAR AFTER (BEST UX)
+  const handlePrint = () => {
+    window.print();
+
+    setTimeout(() => {
+      localStorage.removeItem("gridData");
+      generateCells(); // reset cells
+    }, 500); // small delay so print still shows data
+  };
+
   return (
     <div className="app">
 
       {/* HEADER */}
       <div className="header">
         <h2>BOSS 💰</h2>
-        <button onClick={() => window.print()}>Print</button>
+        <button onClick={handlePrint}>Print</button>
       </div>
 
       {/* GRID */}
