@@ -23,6 +23,11 @@ export default function Home() {
   const [address, setAddress] = useState("");
   const [alertIndex, setAlertIndex] = useState<number | null>(null);
 
+  // ── MOBILE VIEW STATE ──
+  const [mobileTab, setMobileTab] = useState<"single" | "grid">("single");
+  const [mobileActiveIndex, setMobileActiveIndex] = useState<number>(0);
+  const [mobileText, setMobileText] = useState<string>("");
+
   const total = config.rows * config.cols;
 
   // ── Dynamic font size: fewer rows → larger text ──
@@ -138,6 +143,48 @@ export default function Home() {
     }));
   };
 
+  // ── Sync mobile input text when active index changes or cell data changes ──
+  useEffect(() => {
+    if (data[mobileActiveIndex]) {
+      setMobileText(data[mobileActiveIndex]?.address || "");
+    }
+  }, [mobileActiveIndex, data]);
+
+  const handleMobileSave = () => {
+    const updated = [...data];
+    if (!updated[mobileActiveIndex]) return;
+    updated[mobileActiveIndex] = { address: mobileText.trim() };
+    setData(updated);
+  };
+
+  const handleMobileSaveAndNext = () => {
+    const updated = [...data];
+    if (updated[mobileActiveIndex]) {
+      updated[mobileActiveIndex] = { address: mobileText.trim() };
+      setData(updated);
+    }
+    let nextIdx = mobileActiveIndex + 1;
+    if (nextIdx >= total) nextIdx = 0;
+    setMobileActiveIndex(nextIdx);
+  };
+
+  const handleMobilePrev = () => {
+    setMobileActiveIndex((prev) => (prev > 0 ? prev - 1 : total - 1));
+  };
+
+  const handleMobileNext = () => {
+    setMobileActiveIndex((prev) => (prev < total - 1 ? prev + 1 : 0));
+  };
+
+  const handleMobileClearCurrent = () => {
+    const updated = [...data];
+    if (updated[mobileActiveIndex]) {
+      updated[mobileActiveIndex] = { address: "" };
+      setData(updated);
+      setMobileText("");
+    }
+  };
+
   const filledCount = data.filter((c) => c.address).length;
 
   // ── CSS Custom Properties for dynamic grid ──
@@ -209,8 +256,111 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── GRID ── */}
-      <div className="a4-container">
+      {/* ── MOBILE TABS (Only visible on mobile) ── */}
+      <div className="mobile-tabs mobile-only">
+        <button
+          className={`mobile-tab-btn ${mobileTab === "single" ? "active" : ""}`}
+          onClick={() => setMobileTab("single")}
+        >
+          ✍️ Single Input
+        </button>
+        <button
+          className={`mobile-tab-btn ${mobileTab === "grid" ? "active" : ""}`}
+          onClick={() => setMobileTab("grid")}
+        >
+          📄 A4 Grid Preview
+        </button>
+      </div>
+
+      {/* ── MOBILE SINGLE INPUT VIEW ── */}
+      {mobileTab === "single" && (
+        <div className="mobile-single-input-container mobile-only">
+          <div className="mobile-input-card">
+            <div className="mobile-card-header">
+              <button
+                className="nav-arrow-btn"
+                onClick={handleMobilePrev}
+                title="Previous cell"
+              >
+                ◀
+              </button>
+              <div className="mobile-cell-badge">
+                <span className="cell-num">
+                  Cell {mobileActiveIndex + 1} of {total}
+                </span>
+                {data[mobileActiveIndex]?.address ? (
+                  <span className="status-badge filled">● Filled</span>
+                ) : (
+                  <span className="status-badge empty">○ Empty</span>
+                )}
+              </div>
+              <button
+                className="nav-arrow-btn"
+                onClick={handleMobileNext}
+                title="Next cell"
+              >
+                ▶
+              </button>
+            </div>
+
+            <textarea
+              className="mobile-textarea"
+              rows={4}
+              placeholder={`Paste WhatsApp address for Cell ${mobileActiveIndex + 1}...`}
+              value={mobileText}
+              onChange={(e) => setMobileText(e.target.value)}
+            />
+
+            <div className="mobile-actions">
+              <button
+                className="btn btn-primary mobile-btn-main"
+                onClick={handleMobileSaveAndNext}
+              >
+                ✓ Save &amp; Next ❯
+              </button>
+              <div className="mobile-sub-actions">
+                <button className="btn btn-ghost" onClick={handleMobileSave}>
+                  Save
+                </button>
+                <button
+                  className="btn btn-danger"
+                  onClick={handleMobileClearCurrent}
+                  disabled={!data[mobileActiveIndex]?.address && !mobileText}
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            {/* Quick summary chip bar */}
+            <div className="mobile-cell-summary">
+              <div className="summary-title">
+                <span>Quick Select Cell ({filledCount}/{total} Filled)</span>
+              </div>
+              <div className="summary-chips">
+                {data.map((cell, idx) => (
+                  <button
+                    key={idx}
+                    className={`summary-chip ${
+                      idx === mobileActiveIndex ? "current" : ""
+                    } ${cell.address ? "filled" : ""}`}
+                    onClick={() => setMobileActiveIndex(idx)}
+                  >
+                    #{idx + 1} {cell.address ? "✓" : "+"}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── GRID (Always visible on desktop, toggleable on mobile via tab) ── */}
+      <div
+        className={`a4-container ${
+          mobileTab === "grid" ? "mobile-show-grid" : "mobile-hide-grid"
+        }`}
+      >
         <div className="a4-sheet">
           <div className="grid" style={gridStyle}>
             {data.map((cell, i) => (
