@@ -570,11 +570,16 @@ body::before {
   .header,
   .settings-bar,
   .grid-info,
-  .overlay {
+  .overlay,
+  .mobile-tabs,
+  .mobile-single-input-container,
+  .mobile-only {
     display: none !important;
   }
 
-  .a4-container {
+  .a4-container,
+  .a4-container.mobile-hide-grid,
+  .a4-container.mobile-show-grid {
     width: 210mm !important;
     height: 297mm !important;
     max-width: 210mm !important;
@@ -843,7 +848,7 @@ body::before {
 }
 
 /* ── RESPONSIVE ───────────────────────────────── */
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   .mobile-only {
     display: block !important;
   }
