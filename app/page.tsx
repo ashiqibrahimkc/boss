@@ -27,12 +27,12 @@ export default function Home() {
 
   // ── Dynamic font size: fewer rows → larger text ──
   const getDynamicFontSize = useCallback(() => {
-    if (config.rows <= 2) return 22;
-    if (config.rows <= 3) return 19;
-    if (config.rows <= 4) return 17;
-    if (config.rows <= 5) return 15;
-    if (config.rows <= 7) return 14;
-    return 12;
+    if (config.rows <= 2) return 26;
+    if (config.rows <= 3) return 22;
+    if (config.rows <= 4) return 19;
+    if (config.rows <= 5) return 17;
+    if (config.rows <= 7) return 15;
+    return 13;
   }, [config.rows]);
 
   // ── LOAD DATA ──

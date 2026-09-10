@@ -278,8 +278,10 @@ body::before {
   overflow: hidden;
   box-shadow: var(--shadow-md);
   transition: var(--transition);
-  flex: 1;
-  aspect-ratio: 210 / 297; /* A4 aspect ratio */
+  width: 100%;
+  aspect-ratio: 210 / 297; /* Exact A4 aspect ratio */
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── GRID ─────────────────────────────────────── */
@@ -291,6 +293,7 @@ body::before {
   padding: 0;
   width: 100%;
   height: 100%;
+  flex: 1;
 }
 
 /* ── CELL ─────────────────────────────────────── */
@@ -305,6 +308,8 @@ body::before {
   justify-content: center;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  height: 100%;
   min-height: 0;
 }
 
@@ -533,13 +538,33 @@ body::before {
    PRINT STYLES
    ═══════════════════════════════════════════════ */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html,
   body {
-    background: white;
-    color: black;
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: black !important;
+    overflow: hidden !important;
   }
 
   body::before {
-    display: none;
+    display: none !important;
+  }
+
+  .app {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    background: white !important;
   }
 
   .header,
@@ -550,57 +575,69 @@ body::before {
   }
 
   .a4-container {
-    width: 210mm;
-    height: 297mm;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-    aspect-ratio: unset;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
   }
 
   .a4-sheet {
-    width: 100%;
-    height: 100%;
-    background: white;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
-    aspect-ratio: unset;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 210mm !important;
+    background: white !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    aspect-ratio: unset !important;
+    display: block !important;
   }
 
   .grid {
-    width: 100%;
-    height: 100%;
-    gap: 0;
-    padding: 0;
+    width: 210mm !important;
+    height: 297mm !important;
+    display: grid !important;
+    grid-template-columns: var(--grid-cols) !important;
+    grid-template-rows: var(--grid-rows) !important;
+    gap: 0 !important;
+    padding: 0 !important;
   }
 
   .cell {
-    background: white;
-    border: 1.5px solid #000;
-    border-radius: 0;
-    box-shadow: none;
+    background: white !important;
+    border: 1px solid #000 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .cell::before,
   .cell::after {
-    display: none;
+    display: none !important;
   }
 
   .content {
-    color: black;
-    font-weight: 700;
+    color: black !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    width: 100% !important;
+    padding: 4mm !important;
+    line-height: 1.4 !important;
   }
 
   .plus {
-    display: none;
+    display: none !important;
   }
-}
-
-@page {
-  size: A4;
-  margin: 0;
 }
 
 /* ── RESPONSIVE ───────────────────────────────── */
@@ -627,28 +664,39 @@ body::before {
   }
 
   .a4-container {
-    padding: 0;
-    margin: 0 auto;
+    padding: 10px;
+    margin: 8px auto;
     max-width: 100%;
+    width: 100%;
     flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
   }
 
   .a4-sheet {
-    border: none;
-    aspect-ratio: unset;
-    flex: 1;
-  }
-
-  .grid {
-    grid-template-columns: 1fr !important;
-    grid-template-rows: none !important;
-    min-height: unset;
-    height: auto;
-    overflow-y: auto;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 210 / 297;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
   }
 
   .cell {
-    min-height: 70px;
+    min-height: 0;
+  }
+
+  .content {
+    padding: 4px 6px;
+    font-size: clamp(9px, 2.2vw, 13px);
+    line-height: 1.25;
+  }
+
+  .plus {
+    font-size: 18px;
   }
 
   .grid-info {
